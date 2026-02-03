@@ -1,0 +1,14 @@
+.segmentDisplay {
+    width: 120px;
+    height: 120px;
+    display: block;
+}
+
+.segmentOn {
+    fill: #00ff7f;
+    stroke: #00c060;
+}
+
+.segmentOff {
+    visibility: hidden;
+}

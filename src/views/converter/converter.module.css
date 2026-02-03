@@ -1,0 +1,48 @@
+.converter {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+}
+
+.converterLabel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: #e5e7eb;
+}
+
+.converterInput {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #4b5563;
+    background: #111827;
+    color: #f9fafb;
+    min-width: 6rem;
+}
+
+.converterInput:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 1px #10b98166;
+}
+
+.converterDisplay {
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    background: radial-gradient(circle at top, #111827, #020617);
+    box-shadow:
+        0 0 0 1px #111827,
+        0 10px 30px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(16, 185, 129, 0.2);
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-auto-rows: auto;
+    gap: 1.5rem;
+    align-items: center;
+    justify-items: center;
+}

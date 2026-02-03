@@ -1,10 +1,9 @@
 import './App.css'
+import Converter from './views/converter/converter'
 
 function App() {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <Converter />
   )
 }
 
