@@ -28,11 +28,6 @@ export const SEGMENT_PATHS: Record<number, string> = {
 
 export const SEGMENT_IDS = [1, 2, 3, 4, 5] as const
 
-export const SEGMENT_COLORS = {
-    on: "#00ff7f",
-    off: "#00c060",
-}
-
 export const STROKE_STYLE = {
     fill: "none",
     stroke: "white",

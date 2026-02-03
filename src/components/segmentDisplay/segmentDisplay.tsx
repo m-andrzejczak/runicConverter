@@ -68,11 +68,6 @@ const SegmentDisplay = ({
                 style={{ width: `${SVG_CANVAS_SIZE}px`, height: `${SVG_CANVAS_SIZE}px`, overflow: "hidden" }}
                 role="img"
             >
-                <defs>
-                    <filter id="filter" height="2" width="2">
-
-                    </filter>
-                </defs>
                 <g transform={`scale(${SVG_SCALE_FACTOR})`}>
                     <g transform="translate(25,-25)">
                         {SEGMENT_IDS.map((id) => renderSegmentPath(id, unitSegments.has(id), "u"))}
