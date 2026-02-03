@@ -26,4 +26,9 @@ export const SEGMENT_PATHS: Record<number, string> = {
     5: "M75 25 L75 75",
 }
 
-export const SEGMENT_IDS = [0, 1, 2, 3, 4, 5] as const
+export const SEGMENT_IDS = [1, 2, 3, 4, 5] as const
+
+export const SEGMENT_COLORS = {
+    on: "#00ff7f",
+    off: "#00c060",
+}
