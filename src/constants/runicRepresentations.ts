@@ -32,3 +32,16 @@ export const SEGMENT_COLORS = {
     on: "#00ff7f",
     off: "#00c060",
 }
+
+export const STROKE_STYLE = {
+    fill: "none",
+    stroke: "white",
+    strokeWidth: "2.5",
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    opacity: 0.95,
+}
+
+export const SVG_BASE_CANVAS_SIZE = 100
+export const SVG_CANVAS_SIZE = 300
+export const SVG_SCALE_FACTOR = SVG_CANVAS_SIZE / SVG_BASE_CANVAS_SIZE

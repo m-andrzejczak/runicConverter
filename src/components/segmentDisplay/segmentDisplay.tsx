@@ -3,17 +3,21 @@ import {
     RUNIC_UNIT_SEGMENT_REPRESENTATIONS,
     SEGMENT_PATHS,
     SEGMENT_IDS,
-    SEGMENT_COLORS,
+    STROKE_STYLE,
+    SVG_CANVAS_SIZE,
+    SVG_SCALE_FACTOR,
 } from "../../constants/runicRepresentations"
 import styles from "./segmentDisplay.module.css"
-import { useMemo, useRef } from "react"
-import SvgIcon from "../svgIcon/svgIcon"
-import DownloadIcon from "../../assets/download.svg?react"
+import { useMemo, useRef, useEffect } from "react"
 
 const SegmentDisplay = ({
     value,
+    onSvgRef,
 }: SegmentDisplayProps) => {
     const svgRef = useRef<SVGSVGElement>(null)
+    const strokePadding = parseFloat(STROKE_STYLE.strokeWidth) * SVG_SCALE_FACTOR / 2
+    const viewBoxPadding = strokePadding
+    const viewBoxSize = SVG_CANVAS_SIZE + viewBoxPadding * 2
 
     const { units, decades, hundreds, thousands } = useMemo(() => {
         return {
@@ -36,104 +40,64 @@ const SegmentDisplay = ({
         ]
     }, [units, decades, hundreds, thousands])
 
-    const handleDownload = () => {
-        if (!svgRef.current) return
+    useEffect(() => {
+        if (onSvgRef) {
+            onSvgRef(svgRef.current)
+        }
+    }, [onSvgRef])
 
-        // Using anchor element injection to avoid local file system access API limitations
-        const svgData = new XMLSerializer().serializeToString(svgRef.current)
-        const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" })
-        const svgUrl = URL.createObjectURL(svgBlob)
-        const downloadLink = document.createElement("a")
-        downloadLink.href = svgUrl
-        downloadLink.download = `runic-${value}.svg`
-        document.body.appendChild(downloadLink)
-        downloadLink.click()
-        document.body.removeChild(downloadLink)
-        URL.revokeObjectURL(svgUrl)
-    }
+    const renderSegmentPath = (id: number, isOn: boolean, keyPrefix: string) => (
+        <path
+            key={`${keyPrefix}-${id}`}
+            d={SEGMENT_PATHS[id]}
+            fill={STROKE_STYLE.fill}
+            stroke={isOn ? STROKE_STYLE.stroke : undefined}
+            strokeWidth={STROKE_STYLE.strokeWidth}
+            strokeLinecap={STROKE_STYLE.strokeLinecap}
+            strokeLinejoin={STROKE_STYLE.strokeLinejoin}
+            opacity={isOn ? STROKE_STYLE.opacity : 0}
+            visibility={isOn ? undefined : "hidden"}
+        />
+    )
 
     return (
         <div className={styles.segmentDisplayContainer}>
             <svg
                 ref={svgRef}
-                className={styles.segmentDisplay}
-                viewBox="0 0 100 100"
+                viewBox={`-${viewBoxPadding} -${viewBoxPadding} ${viewBoxSize} ${viewBoxSize}`}
+                style={{ width: `${SVG_CANVAS_SIZE}px`, height: `${SVG_CANVAS_SIZE}px`, overflow: "hidden" }}
                 role="img"
             >
-                <g transform="translate(25,-25)">
-                    {SEGMENT_IDS.map((id) => {
-                        const isOn = unitSegments.has(id)
+                <defs>
+                    <filter id="filter" height="2" width="2">
 
-                        return (
-                            <path
-                                key={`u-${id}`}
-                                d={SEGMENT_PATHS[id]}
-                                fill={isOn ? SEGMENT_COLORS.on : undefined}
-                                stroke={isOn ? SEGMENT_COLORS.off : undefined}
-                                visibility={isOn ? undefined : "hidden"}
-                            />
-                        )
-                    })}
+                    </filter>
+                </defs>
+                <g transform={`scale(${SVG_SCALE_FACTOR})`}>
+                    <g transform="translate(25,-25)">
+                        {SEGMENT_IDS.map((id) => renderSegmentPath(id, unitSegments.has(id), "u"))}
+                    </g>
+                    <g transform="translate(100,0) scale(-1,1) translate(25,-25)">
+                        {SEGMENT_IDS.map((id) => renderSegmentPath(id, decadeSegments.has(id), "d"))}
+                    </g>
+                    <g transform="translate(0,100) scale(1,-1) translate(25,-25)">
+                        {SEGMENT_IDS.map((id) => renderSegmentPath(id, hundredSegments.has(id), "h"))}
+                    </g>
+                    <g transform="translate(100,0) scale(-1,1) translate(0,100) scale(1,-1) translate(25,-25)">
+                        {SEGMENT_IDS.map((id) => renderSegmentPath(id, thousandSegments.has(id), "t"))}
+                    </g>
+                    <path
+                        d="M50 0 L50 100"
+                        fill={STROKE_STYLE.fill}
+                        stroke={value ? STROKE_STYLE.stroke : undefined}
+                        strokeWidth={STROKE_STYLE.strokeWidth}
+                        strokeLinecap={STROKE_STYLE.strokeLinecap}
+                        strokeLinejoin={STROKE_STYLE.strokeLinejoin}
+                        opacity={value ? STROKE_STYLE.opacity : 0}
+                        visibility={value ? undefined : "hidden"}
+                    />
                 </g>
-                <g transform="translate(100,0) scale(-1,1) translate(25,-25)">
-                    {SEGMENT_IDS.map((id) => {
-                        const isOn = decadeSegments.has(id)
-
-                        return (
-                            <path
-                                key={`d-${id}`}
-                                d={SEGMENT_PATHS[id]}
-                                fill={isOn ? SEGMENT_COLORS.on : undefined}
-                                stroke={isOn ? SEGMENT_COLORS.off : undefined}
-                                visibility={isOn ? undefined : "hidden"}
-                            />
-                        )
-                    })}
-                </g>
-                <g transform="translate(0,100) scale(1,-1) translate(25,-25)">
-                    {SEGMENT_IDS.map((id) => {
-                        const isOn = hundredSegments.has(id)
-
-                        return (
-                            <path
-                                key={`h-${id}`}
-                                d={SEGMENT_PATHS[id]}
-                                fill={isOn ? SEGMENT_COLORS.on : undefined}
-                                stroke={isOn ? SEGMENT_COLORS.off : undefined}
-                                visibility={isOn ? undefined : "hidden"}
-                            />
-                        )
-                    })}
-                </g>
-                <g transform="translate(100,0) scale(-1,1) translate(0,100) scale(1,-1) translate(25,-25)">
-                    {SEGMENT_IDS.map((id) => {
-                        const isOn = thousandSegments.has(id)
-
-                        return (
-                            <path
-                                key={`t-${id}`}
-                                d={SEGMENT_PATHS[id]}
-                                fill={isOn ? SEGMENT_COLORS.on : undefined}
-                                stroke={isOn ? SEGMENT_COLORS.off : undefined}
-                                visibility={isOn ? undefined : "hidden"}
-                            />
-                        )
-                    })}
-                </g>
-                <path
-                    d="M50 0 L50 100"
-                    fill={value ? SEGMENT_COLORS.on : undefined}
-                    stroke={value ? SEGMENT_COLORS.off : undefined}
-                    visibility={value ? undefined : "hidden"}
-                />
             </svg>
-            <button
-                onClick={handleDownload}
-                className={styles.downloadButton}
-                title="Download SVG"
-            >
-                <SvgIcon svgIcon={DownloadIcon} color="white" />
-            </button>
         </div>
     )
 }
